@@ -1,15 +1,25 @@
-package com.cp3.soa.dto;
+package com.example.clinica.dto;
 
-import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.*;
 
-public class MedicoDTOs {
+public record MedicoCreateDTO(
+        @NotBlank String nome,
+        @NotBlank String especialidade,
+        @NotBlank String crm,
+        @NotBlank @Email String email
+) {}
 
-    @NotBlank(message = "Nome é obrigatório")
-    private String nome;
+public record MedicoResponseDTO(
+        Long id,
+        String nome,
+        String especialidade,
+        String crm,
+        String email
+) {}
 
-    @NotBlank(message = "Especialidade é obrigatória")
-    private String especialidade;
+public record MedicoUpdateDTO(
+        @NotBlank String nome,
+        @NotBlank String especialidade,
+        @NotBlank @Email String email
+) {}
 
-    @NotBlank(message = "CRM é obrigatório")
-    private String crm;
-}

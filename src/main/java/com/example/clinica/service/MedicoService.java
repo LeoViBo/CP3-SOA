@@ -1,7 +1,6 @@
 package com.example.clinica.service;
 
 import com.example.clinica.domain.model.Medico;
-import com.example.clinica.dto.MedicoDTOs;
 import com.example.clinica.dto.MedicoDTOs.MedicoCreateDTO;
 import com.example.clinica.dto.MedicoDTOs.MedicoResponseDTO;
 import com.example.clinica.dto.MedicoDTOs.MedicoUpdateDTO;
@@ -22,6 +21,7 @@ public class MedicoService {
 
     @Transactional
     public Long criar(MedicoCreateDTO dto) {
+        // Verifica se já existe CRM cadastrado
         repo.findByCrm(dto.getCrm()).ifPresent(m -> {
             throw new IllegalArgumentException("CRM já cadastrado");
         });
@@ -30,6 +30,7 @@ public class MedicoService {
                 .nome(dto.getNome())
                 .especialidade(dto.getEspecialidade())
                 .crm(dto.getCrm())
+                .email(dto.getEmail()) // Incluindo email
                 .build();
 
         return repo.save(medico).getId();
@@ -39,14 +40,25 @@ public class MedicoService {
     public Page<MedicoResponseDTO> listar(Pageable pageable) {
         return repo.findAll(pageable)
                 .map(m -> new MedicoResponseDTO(
-                        m.getId(), m.getNome(), m.getEspecialidade(), m.getCrm()));
+                        m.getId(),
+                        m.getNome(),
+                        m.getEspecialidade(),
+                        m.getCrm(),
+                        m.getEmail()  // Incluindo email
+                ));
     }
 
     @Transactional(readOnly = true)
     public MedicoResponseDTO getById(Long id) {
         Medico m = repo.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("Médico não encontrado"));
-        return new MedicoResponseDTO(m.getId(), m.getNome(), m.getEspecialidade(), m.getCrm());
+        return new MedicoResponseDTO(
+                m.getId(),
+                m.getNome(),
+                m.getEspecialidade(),
+                m.getCrm(),
+                m.getEmail()  // Incluindo email
+        );
     }
 
     @Transactional
@@ -56,7 +68,8 @@ public class MedicoService {
 
         m.setNome(dto.getNome());
         m.setEspecialidade(dto.getEspecialidade());
-        // CRM não é alterável aqui; se quiser permitir, adiciona validação como no create
+        m.setEmail(dto.getEmail()); // Atualizando email
+        // CRM não é alterável aqui
 
         repo.save(m);
     }
