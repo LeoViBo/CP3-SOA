@@ -16,3 +16,21 @@ public record ConsultaCreateDTO(
         @NotNull Long medicoId,
         @NotNull @Future LocalDateTime dataHora
 ) {}
+
+public record PacienteUpdateDTO(
+        @NotBlank String nome,
+        @NotBlank @Email String email
+) {}
+
+public record ConsultaUpdateDTO(
+        @NotNull @Future LocalDateTime dataHora,
+        String descricao
+) {}
+
+public record ConsultaResponseDTO(
+        Long id,
+        Long pacienteId,
+        Long medicoId,
+        LocalDateTime dataHora,
+        String descricao
+) {}

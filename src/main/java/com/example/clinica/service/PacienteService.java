@@ -37,4 +37,33 @@ public class PacienteService {
                         p.getId(), p.getNome(),
                         p.getCpf().getValue(), p.getEmail().getValue()));
     }
+
+    @Transactional(readOnly = true)
+    public PacienteResponseDTO getById(Long id) {
+    Paciente p = repo.findById(id)
+        .orElseThrow(() -> new IllegalArgumentException("Paciente não encontrado"));
+    return new PacienteResponseDTO(p.getId(), p.getNome(), p.getCpf().getValue(), p.getEmail().getValue());
+    }
+    
+    @Transactional
+    public void atualizar(Long id, PacienteCreateDTO dto) {
+        Paciente p = repo.findById(id)
+            .orElseThrow(() -> new IllegalArgumentException("Paciente não encontrado"));
+        if (!p.getCpf().getValue().equals(dto.cpf())) {
+            repo.findByCpfValue(dto.cpf())
+                .ifPresent(existing -> { throw new IllegalArgumentException("CPF já cadastrado"); });
+            p.setCpf(new Cpf(dto.cpf()));
+            }
+        p.setNome(dto.nome());
+        p.setEmail(new Email(dto.email()));
+        repo.save(p);
+    }
+
+    @Transactional
+    public void deletar(Long id) {
+        if (!repo.existsById(id)) {
+            throw new IllegalArgumentException("Paciente não encontrado");
+            }
+        repo.deleteById(id);
+    }
 }
