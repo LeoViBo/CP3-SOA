@@ -1,0 +1,21 @@
+-- db/migration/V1__init.sql
+CREATE TABLE paciente (
+  id BIGSERIAL PRIMARY KEY,
+  cpf VARCHAR(11) NOT NULL UNIQUE,
+  email VARCHAR(255) NOT NULL,
+  nome VARCHAR(120) NOT NULL
+);
+
+CREATE TABLE medico (
+  id BIGSERIAL PRIMARY KEY,
+  crm VARCHAR(30) NOT NULL UNIQUE,
+  nome VARCHAR(120) NOT NULL
+);
+
+CREATE TABLE consulta (
+  id BIGSERIAL PRIMARY KEY,
+  paciente_id BIGINT NOT NULL REFERENCES paciente(id),
+  medico_id BIGINT NOT NULL REFERENCES medico(id),
+  status VARCHAR(20) NOT NULL,
+  data_hora TIMESTAMP NOT NULL
+);
